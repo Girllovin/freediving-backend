@@ -102,7 +102,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public void recoveryPassword(String email) {
         // TODO: Replace with secure random password generation
-        String passwordDefault = "We_are_the_champions";
+        String passwordDefault = "12345678";
         String passwordNew = passwordEncoder.encode(passwordDefault);
 
         // Find user or throw exception
