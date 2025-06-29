@@ -2,9 +2,10 @@ package smallITgroup.accounting.service;
 
 import java.util.List;
 
-import smallITgroup.accounting.dto.UserDto;        // DTO for user data (email, roles)
-import smallITgroup.accounting.dto.UserRegisterDto; // DTO for user registration data
+import smallITgroup.accounting.dto.LoginDto;        // DTO for user data (email, roles)
+import smallITgroup.accounting.dto.UserDto; // DTO for user registration data
 import smallITgroup.accounting.dto.UserInfoDto;    // DTO for user info (including roles, password, etc.)
+import smallITgroup.accounting.dto.UserRegisterDto;       // DTO for login data
 
 public interface UserAccountService {
 
@@ -12,6 +13,10 @@ public interface UserAccountService {
     // Method to register a new user with the provided registration details.
     // The method returns a UserDto containing the registered user's details.
     UserDto register(UserRegisterDto userRegisterDto);
+
+    // Method to authenticate a user with email and password.
+    // The method returns a UserDto containing the authenticated user's details.
+    UserDto login(LoginDto loginDto);
 
     // Method to retrieve the user based on their login (email).
     // The method returns a UserDto containing the user information.

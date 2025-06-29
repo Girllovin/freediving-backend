@@ -3,9 +3,11 @@ package smallITgroup.accounting.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 // The @Getter annotation automatically generates getter methods for all fields in the class.
 @Getter
+@Setter
 public class ChangePasswordDto {
 
     // The @NotBlank annotation ensures that the password field is not null or empty.

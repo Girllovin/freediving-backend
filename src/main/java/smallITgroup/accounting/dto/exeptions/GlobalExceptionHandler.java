@@ -1,14 +1,14 @@
 package smallITgroup.accounting.dto.exeptions;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @ControllerAdvice // Indicates that this class will handle global exceptions across controllers
 public class GlobalExceptionHandler {
@@ -32,5 +32,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "User not found");
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidPassword(InvalidPasswordException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Invalid password");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserExists(UserExistsException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "User already exists");
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }
