@@ -12,7 +12,7 @@
 	<artifactId>freedive</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>freeDive</name>
-	<description>requests simulator for AccessSystem</description>
+	<description>freeDive</description>
 	<url/>
 	<licenses>
 		<license/>
