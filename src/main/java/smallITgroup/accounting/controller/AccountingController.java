@@ -14,9 +14,10 @@ import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
 import smallITgroup.accounting.service.UserAccountService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/account")
 public class AccountingController {
 
 
@@ -24,21 +25,21 @@ public class AccountingController {
     final UserAccountService userAccountService;
 
     // Endpoint to register a new user
-    @PostMapping("/account/register")
+    @PostMapping("/register")
     public UserDto register(@Valid @RequestBody UserRegisterDto userRegisterDto) {
         System.out.println("Begining of registration");
         return userAccountService.register(userRegisterDto);
     }
 
     // Endpoint to delete a user by email
-    @DeleteMapping("/account/user/{email}")
+    @DeleteMapping("/user/{email}")
     public UserDto removeUser(@PathVariable String email) {
         return userAccountService.removeUser(email);
     }
 
     // Endpoint to change password, allowed only if the email matches the authenticated user
     @PreAuthorize("#email == authentication.name")
-    @PutMapping("/account/user/{email}/password")
+    @PutMapping("/user/{email}/password")
     public UserInfoDto changePassword(
             @PathVariable String email,
             @RequestBody ChangePasswordDto changePasswordDto) {
@@ -46,20 +47,20 @@ public class AccountingController {
     }
 
     // Endpoint to get the list of all users
-    @GetMapping("/account/users")
+    @GetMapping("/users")
     public List<UserInfoDto> getAllUsers() {
         return userAccountService.getAllUsers();
     }
 
     // Endpoint to trigger password recovery process
-    @GetMapping("/account/recovery/{email}")
+    @GetMapping("/recovery/{email}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void getRecovery(@PathVariable String email) {
         userAccountService.recoveryPassword(email);
     }
     
     // Endpoint to get the list of all users email
-    @GetMapping("/account/users/email")
+    @GetMapping("/users/email")
     public List<String> getUsersEmail() {
         return userAccountService.getUsersEmail();
     }

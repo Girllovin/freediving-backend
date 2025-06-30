@@ -14,7 +14,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class AuthorizationConfiguration {
 
-	@SuppressWarnings("removal")
+	
 	
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
