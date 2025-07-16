@@ -4,11 +4,20 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import smallITgroup.accounting.dto.ChangePasswordDto;
+import smallITgroup.accounting.dto.LoginDto;
 import smallITgroup.accounting.dto.UserDto;
 import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
@@ -19,24 +28,26 @@ import smallITgroup.accounting.service.UserAccountService;
 @RequiredArgsConstructor
 public class AccountingController {
 
-
     // Injected service for user account operations
     final UserAccountService userAccountService;
 
-    // Endpoint to register a new user
     @PostMapping("/account/register")
     public UserDto register(@Valid @RequestBody UserRegisterDto userRegisterDto) {
         System.out.println("Begining of registration");
         return userAccountService.register(userRegisterDto);
     }
 
-    // Endpoint to delete a user by email
+    @PostMapping("/account/login")
+    public UserDto login(@Valid @RequestBody LoginDto loginDto) {
+        System.out.println("Beginning of login");
+        return userAccountService.login(loginDto);
+    }
+
     @DeleteMapping("/account/user/{email}")
     public UserDto removeUser(@PathVariable String email) {
         return userAccountService.removeUser(email);
     }
 
-    // Endpoint to change password, allowed only if the email matches the authenticated user
     @PreAuthorize("#email == authentication.name")
     @PutMapping("/account/user/{email}/password")
     public UserInfoDto changePassword(
@@ -45,20 +56,17 @@ public class AccountingController {
         return userAccountService.changePassword(email, changePasswordDto.getNewPassword());
     }
 
-    // Endpoint to get the list of all users
     @GetMapping("/account/users")
     public List<UserInfoDto> getAllUsers() {
         return userAccountService.getAllUsers();
     }
 
-    // Endpoint to trigger password recovery process
     @GetMapping("/account/recovery/{email}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void getRecovery(@PathVariable String email) {
         userAccountService.recoveryPassword(email);
     }
     
-    // Endpoint to get the list of all users email
     @GetMapping("/account/users/email")
     public List<String> getUsersEmail() {
         return userAccountService.getUsersEmail();

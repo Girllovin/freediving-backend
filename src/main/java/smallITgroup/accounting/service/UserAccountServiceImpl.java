@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import smallITgroup.accounting.dao.UserAccountRepository;
+import smallITgroup.accounting.dto.LoginDto;
 import smallITgroup.accounting.dto.UserDto;
 import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
-import smallITgroup.accounting.dto.exeptions.*;
+import smallITgroup.accounting.dto.exeptions.InvalidPasswordException;
+import smallITgroup.accounting.dto.exeptions.UserExistsException;
+import smallITgroup.accounting.dto.exeptions.UserNotFoundException;
 import smallITgroup.accounting.model.UserAccount;
 
 enum Roles {
@@ -52,6 +55,21 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccountRepository.findAll().forEach(System.out::println);
 
         // Return mapped UserDto
+        return modelMapper.map(userAccount, UserDto.class);
+    }
+
+    @Override
+    public UserDto login(LoginDto loginDto) {
+        // Find user by email or throw exception
+        UserAccount userAccount = userAccountRepository.findById(loginDto.getEmail().trim())
+                .orElseThrow(UserNotFoundException::new);
+
+        // Check if password matches
+        if (!passwordEncoder.matches(loginDto.getPassword(), userAccount.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+
+        // Return user info
         return modelMapper.map(userAccount, UserDto.class);
     }
 

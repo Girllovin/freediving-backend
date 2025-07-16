@@ -1,9 +1,9 @@
 package smallITgroup.accounting.dto;
 
-import lombok.Getter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 
 @Getter
 public class UserRegisterDto {

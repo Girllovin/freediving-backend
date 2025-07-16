@@ -10,12 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,19 +19,6 @@ public class GlobalExceptionHandler {
 
     // This method handles validation errors when invalid method arguments are passed
     @ExceptionHandler(MethodArgumentNotValidException.class) 
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400", 
-            description = "Validation error",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"email: Email can't be empty; password: Password can't be empty\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleValidationError(MethodArgumentNotValidException ex) {
         
         // Extracting the error messages from the validation exception and formatting them
@@ -57,19 +38,6 @@ public class GlobalExceptionHandler {
 
     // Handle authentication exceptions (invalid credentials)
     @ExceptionHandler({BadCredentialsException.class, InvalidPasswordException.class})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "401", 
-            description = "Authentication failed - invalid credentials",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"Invalid credentials\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleAuthenticationException(Exception ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Invalid credentials");
@@ -78,19 +46,6 @@ public class GlobalExceptionHandler {
 
     // Handle user not found exceptions
     @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "404", 
-            description = "User not found",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"User not found\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleUserNotFoundException(Exception ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "User not found");
@@ -99,19 +54,6 @@ public class GlobalExceptionHandler {
 
     // Handle access denied exceptions (insufficient permissions)
     @ExceptionHandler(AccessDeniedException.class)
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "403", 
-            description = "Access denied - insufficient permissions",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"Access denied\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Access denied");
@@ -120,19 +62,6 @@ public class GlobalExceptionHandler {
 
     // Handle user already exists exceptions
     @ExceptionHandler(UserExistsException.class)
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "409", 
-            description = "User already exists",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"User already exists\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleUserExistsException(UserExistsException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "User already exists");
@@ -141,19 +70,6 @@ public class GlobalExceptionHandler {
 
     // Handle general authentication exceptions
     @ExceptionHandler(AuthenticationException.class)
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "401", 
-            description = "Authentication failed",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = "{\"error\":\"Authentication failed\"}"
-                )
-            )
-        )
-    })
     public ResponseEntity<Map<String, String>> handleGeneralAuthenticationException(AuthenticationException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Authentication failed");
@@ -162,7 +78,6 @@ public class GlobalExceptionHandler {
 
     // Generic error response schema for Swagger documentation
     public static class ErrorResponse {
-        @Schema(description = "Error message", example = "Invalid credentials")
         private String error;
 
         public String getError() {
