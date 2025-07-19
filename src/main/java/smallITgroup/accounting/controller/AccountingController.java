@@ -64,6 +64,7 @@ public class AccountingController {
     @GetMapping("/account/recovery/{email}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void getRecovery(@PathVariable String email) {
+    	System.out.println("Begining of recovery");
         userAccountService.recoveryPassword(email);
     }
     
