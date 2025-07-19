@@ -2,6 +2,10 @@ package smallITgroup.accounting.dto.exeptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,5 +36,56 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // @ExceptionHandler(UserNotFoundException.class)
+    // Handle authentication exceptions (invalid credentials)
+    @ExceptionHandler({BadCredentialsException.class, InvalidPasswordException.class})
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Invalid credentials");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    // Handle user not found exceptions
+    @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleUserNotFoundException(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "User not found");
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    // Handle access denied exceptions (insufficient permissions)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Access denied");
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    // Handle user already exists exceptions
+    @ExceptionHandler(UserExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserExistsException(UserExistsException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "User already exists");
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    // Handle general authentication exceptions
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleGeneralAuthenticationException(AuthenticationException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Authentication failed");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    // Generic error response schema for Swagger documentation
+    public static class ErrorResponse {
+        private String error;
+
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+    }
 }

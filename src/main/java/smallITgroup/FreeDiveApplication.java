@@ -1,4 +1,4 @@
-package smallITgroup.freedive;
+package smallITgroup;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +8,7 @@ public class FreeDiveApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FreeDiveApplication.class, args);
+		System.out.println("FreeDiveApplication started");
 	}
 
 }
