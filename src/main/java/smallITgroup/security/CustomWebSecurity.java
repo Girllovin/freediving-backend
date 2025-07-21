@@ -44,9 +44,15 @@ public class CustomWebSecurity {
 	            .cors().and()
 	            .csrf().disable()
 	            .authorizeHttpRequests(auth -> auth
-	                    .requestMatchers("/account/login", "/account/register", "/account/recovery/**").permitAll()
-	                    .anyRequest().authenticated()
-	            )
+	            	    .requestMatchers(
+	            	        "/account/login",
+	            	        "/account/register",
+	            	        "/account/recovery/**",
+	            	        "/payment/success",
+	            	        "/account/check"
+	            	    ).permitAll()
+	            	    .anyRequest().authenticated()
+	            	)
 	            .formLogin()
 	            .and()
 	            .httpBasic().disable();;
