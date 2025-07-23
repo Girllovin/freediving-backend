@@ -17,15 +17,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	final UserAccountRepository userAccountRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserAccount userAccount = userAccountRepository.findById(username)
-				.orElseThrow(() -> new UsernameNotFoundException(username));
-		String[] roles = userAccount.getRoles()
-									.stream()
-									.map(r -> "ROLE_" + r)
-									.toArray(String[]::new);
-		return new User(username, userAccount.getPassword(), AuthorityUtils.createAuthorityList(roles));
-	}
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserAccount user = userAccountRepository.findById(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword()) 
+                .authorities("USER") 
+                .build();
+    }
 
 } 
