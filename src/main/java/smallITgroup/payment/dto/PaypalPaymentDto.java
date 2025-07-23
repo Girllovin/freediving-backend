@@ -17,6 +17,6 @@ public class PaypalPaymentDto {
     private String payerId;
     private BigDecimal amount;
     private String currency;
-    private String payerEmail;  // email из PayPal
-    private String userEmail;   // email текущего пользователя, который присылает фронт
+    private String payerEmail;  
+    private String userEmail;   
 }

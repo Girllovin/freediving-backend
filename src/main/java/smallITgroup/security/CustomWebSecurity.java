@@ -7,10 +7,13 @@ import smallITgroup.accounting.dao.UserAccountRepository;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -25,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomWebSecurity {
 	final UserAccountRepository userAccountRepository;
+	private final JwtAuthFilter jwtAuthFilter;
 
 	public boolean checkPostAuthor(String postId, String userName) {
 //		UserAccount post;
@@ -38,28 +42,38 @@ public class CustomWebSecurity {
 		return false;
 	}
 	
-	  @Bean
-	    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	        http
-	            .cors().and()
-	            .csrf().disable()
-	            .authorizeHttpRequests(auth -> auth
-	            	    .requestMatchers(
-	            	        "/account/login",
-	            	        "/account/register",
-	            	        "/account/recovery/**",
-	            	        "/payment/success",
-	            	        "/account/check"
-	            	    ).permitAll()
-	            	    .anyRequest().authenticated()
-	            	)
-	            .formLogin()
-	            .and()
-	            .httpBasic().disable();;
-	        
+//	  @Bean
+//		public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//			System.out.println("🔧 SecurityFilterChain is being applied");
+//
+//			http
+//				.securityMatcher("/**")
+//				.csrf(csrf -> csrf.disable())
+//				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+//				.authorizeHttpRequests(authorize -> authorize
+//					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//					.requestMatchers(
+//						"/account/register",
+//						"/account/login",
+//						"/account/recovery/**",
+//						"/swagger-ui/**",
+//						"/v3/api-docs/**",
+//						"/swagger-resources/**",
+//						"/swagger-ui.html",
+//						"/webjars/**",
+//						"/error"
+//					).permitAll()
+//					.requestMatchers("/forum/**").authenticated()
+//					.anyRequest().permitAll()
+//				)
+//				.httpBasic().disable()
+//				.formLogin(form -> form.disable())
+//				// 🔐 ВСТАВЛЯЕМ JWT-фильтр перед UsernamePasswordAuthenticationFilter
+//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//			return http.build();
+//		}
 
-	        return http.build();
-	    }
 
 	    @Bean
 	    public CorsFilter corsFilter() {
@@ -92,8 +106,8 @@ public class CustomWebSecurity {
 	        };
 	    }
 	    
-	    @Bean
-	    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-	        return authConfig.getAuthenticationManager();
-	    }
+//	    @Bean
+//	    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+//	        return authConfig.getAuthenticationManager();
+//	    }
 }

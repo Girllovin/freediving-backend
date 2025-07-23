@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import smallITgroup.accounting.dto.ChangePasswordDto;
 import smallITgroup.accounting.dto.LoginDto;
+import smallITgroup.accounting.dto.LoginResponse;
 import smallITgroup.accounting.dto.UserDto;
 import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
@@ -64,16 +65,19 @@ public class AccountingController {
             if (email == null || email.isEmpty()) {
                 return ResponseEntity.ok(new AuthCheckResponse(false));
             }
-
-            // Проверяем, есть ли у пользователя доступ
-            boolean hasAccess = paymentService.hasCompletedPayment(email);
-            if (!hasAccess) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Payment Not Found");
-            }
-
             UserAccount user = userAccountRepository.findById(email)
                     .orElseThrow(UserNotFoundException::new);
-
+            // Check user access
+            boolean hasAccess = paymentService.hasCompletedPayment(email);
+            if (!hasAccess) {
+            	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                        new AuthCheckFullResponse(
+                            true,
+                            new UserDto(user.getEmail(), user.getRoles()),
+                            false
+                        )
+                    );
+            }
             return ResponseEntity.ok(new AuthCheckFullResponse(
                     true,
                     new UserDto(user.getEmail(), user.getRoles()),
@@ -85,7 +89,6 @@ public class AccountingController {
     }
 
 
-    // Класс для ответа с простым флагом аутентификации
     public static class AuthCheckResponse {
         public boolean isAuth;
 
@@ -94,7 +97,6 @@ public class AccountingController {
         }
     }
 
-    // Класс для расширенного ответа с данными пользователя и доступом
     public static class AuthCheckFullResponse {
         public boolean isAuth;
         public UserDto userDto;
@@ -114,24 +116,26 @@ public class AccountingController {
     }
 
     @PostMapping("/account/login")
-    public UserDto login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
         System.out.println("Beginning of login");
 
-        // Выполняем аутентификацию
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
-
-        // Сохраняем аутентификацию в SecurityContext
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Создаём сессию и сохраняем туда SecurityContext
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-        // Возвращаем данные пользователя, например, из сервиса
-        return userAccountService.login(loginDto);
+        UserDto userDto = userAccountService.login(loginDto);
+
+        String token = jwtService.generateToken(userDto.getEmail());
+
+        return ResponseEntity.ok().body(
+            new LoginResponse(token, userDto)
+        );
     }
+
 
     @DeleteMapping("/account/user/{email}")
     public UserDto removeUser(@PathVariable String email) {
