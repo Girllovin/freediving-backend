@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [ main ]  
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -30,19 +30,28 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/app
-            
+
+            # Ensure Docker is running
+            echo "Checking Docker daemon status..."
+            if ! pgrep -x "dockerd" > /dev/null; then
+              echo "Docker is not running. Starting Docker..."
+              sudo systemctl start docker
+            else
+              echo "Docker is already running."
+            fi
+
             # Make deploy script executable
             chmod +x deploy.sh
-            
+
             # Create .env file if it doesn't exist
             if [ ! -f .env ]; then
               echo "Creating .env file from example..."
               cp env.example .env
             fi
-            
+
             # Run deployment
             ./deploy.sh
-            
+
             # Check if deployment was successful
             if [ $? -eq 0 ]; then
               echo "Deployment completed successfully!"
@@ -50,3 +59,4 @@ jobs:
               echo "Deployment failed!"
               exit 1
             fi
+
