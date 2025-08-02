@@ -39,6 +39,9 @@ public class AuthorizationConfiguration {
 				// Allow CORS pre-flight
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 	
+				// ✅ Allow Health Check endpoints
+				.requestMatchers("/actuator/health/**", "/actuator/info", "/actuator/metrics/**", "/health", "/ping").permitAll()
+	
 				// ✅ Allow Swagger UI
 				.requestMatchers(
                 "/account/register",
@@ -67,7 +70,12 @@ public class AuthorizationConfiguration {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList(
+			"http://localhost:3000",
+			"https://d2qx2by9g05umu.cloudfront.net",
+			"http://13.61.24.49:8080",
+			"https://13.61.24.49:8080"
+		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
 		configuration.setAllowCredentials(true);
