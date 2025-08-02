@@ -6,10 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Singular;
 
 // @Getter annotation automatically generates getter methods for all fields in the class.
 @Getter
+
+// @Setter annotation automatically generates setter methods for all fields in the class.
+@Setter
 
 // @AllArgsConstructor generates a constructor with one parameter for each field in the class.
 @AllArgsConstructor
